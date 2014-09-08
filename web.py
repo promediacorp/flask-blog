@@ -15,6 +15,7 @@ from helper_functions import *
 
 
 app = Flask('FlaskBlog')
+print os.getcwd()
 md = Markdown(app)
 md.register_extension(GitHubGistExtension)
 md.register_extension(StrikeExtension)
