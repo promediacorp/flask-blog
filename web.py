@@ -13,9 +13,11 @@ import settings
 import config
 from helper_functions import *
 
+mypath = os.path.dirname(os.path.realpath(__file__))
+template_dir = os.path.join(mypath, "..", "templates")
+print template_dir
 
-app = Flask('FlaskBlog')
-print os.getcwd()
+app = Flask('FlaskBlog', template_folder=template_dir)
 md = Markdown(app)
 md.register_extension(GitHubGistExtension)
 md.register_extension(StrikeExtension)
