@@ -10,6 +10,7 @@ import post
 import user
 import pagination
 import settings
+import config
 from helper_functions import *
 
 
@@ -18,7 +19,7 @@ md = Markdown(app)
 md.register_extension(GitHubGistExtension)
 md.register_extension(StrikeExtension)
 md.register_extension(QuoteExtension)
-app.config.from_object('config')
+app.config.from_object(config)
 
 
 @app.route('/', defaults={'page': 1})
@@ -28,7 +29,7 @@ def index(page):
     posts = postClass.get_posts(int(app.config['PER_PAGE']), skip)
     count = postClass.get_total_count()
     pag = pagination.Pagination(page, app.config['PER_PAGE'], count)
-    return render_template('index.html', posts=posts['data'], pagination=pag, meta_title=app.config['BLOG_TITLE'])
+    return render_template('blog/blog/index.html', posts=posts['data'], pagination=pag, meta_title=app.config['BLOG_TITLE'])
 
 
 @app.route('/tag/<tag>', defaults={'page': 1})
@@ -40,7 +41,7 @@ def posts_by_tag(tag, page):
     if not posts['data']:
         abort(404)
     pag = pagination.Pagination(page, app.config['PER_PAGE'], count)
-    return render_template('index.html', posts=posts['data'], pagination=pag, meta_title='Posts by tag: ' + tag)
+    return render_template('blog/index.html', posts=posts['data'], pagination=pag, meta_title='Posts by tag: ' + tag)
 
 
 @app.route('/post/<permalink>')
@@ -48,7 +49,7 @@ def single_post(permalink):
     post = postClass.get_post_by_permalink(permalink)
     if not post['data']:
         abort(404)
-    return render_template('single_post.html', post=post['data'], meta_title=app.config['BLOG_TITLE'] + '::' + post['data']['title'])
+    return render_template('blog/single_post.html', post=post['data'], meta_title=app.config['BLOG_TITLE'] + '::' + post['data']['title'])
 
 
 @app.route('/q/<query>', defaults={'page': 1})
@@ -63,7 +64,7 @@ def search_results(page, query):
         posts['data'] = []
     count = postClass.get_total_count(search=query)
     pag = pagination.Pagination(page, app.config['PER_PAGE'], count)
-    return render_template('index.html', posts=posts['data'], pagination=pag, meta_title='Search results')
+    return render_template('blog/index.html', posts=posts['data'], pagination=pag, meta_title='Search results')
 
 
 @app.route('/search', methods=['GET', 'POST'])
@@ -131,7 +132,7 @@ def new_post():
     else:
         if session.get('post-preview') and session['post-preview']['action'] == 'edit':
             session.pop('post-preview', None)
-    return render_template('new_post.html',
+    return render_template('blog/new_post.html',
                            meta_title='New post',
                            error=error,
                            error_type=error_type)
@@ -141,7 +142,7 @@ def new_post():
 @login_required()
 def post_preview():
     post = session.get('post-preview')
-    return render_template('preview.html', post=post, meta_title='Preview post::' + post['title'])
+    return render_template('blog/preview.html', post=post, meta_title='Preview post::' + post['title'])
 
 
 @app.route('/posts_list', defaults={'page': 1})
@@ -157,7 +158,7 @@ def posts(page):
     if not posts['data']:
         abort(404)
 
-    return render_template('posts.html', posts=posts['data'], pagination=pag, meta_title='Posts')
+    return render_template('blog/posts.html', posts=posts['data'], pagination=pag, meta_title='Posts')
 
 
 @app.route('/post_edit?id=<id>')
@@ -170,7 +171,7 @@ def post_edit(id):
 
     if session.get('post-preview') and session['post-preview']['action'] == 'add':
         session.pop('post-preview', None)
-    return render_template('edit_post.html',
+    return render_template('blog/edit_post.html',
                            meta_title='Edit post::' + post['data']['title'],
                            post=post['data'],
                            error=False,
@@ -215,7 +216,7 @@ def login():
         if session.get('user'):
             return redirect(url_for('posts'))
 
-    return render_template('login.html',
+    return render_template('blog/login.html',
                            meta_title='Login',
                            error=error,
                            error_type=error_type)
@@ -232,21 +233,21 @@ def logout():
 @login_required()
 def users_list():
     users = userClass.get_users()
-    return render_template('users.html', users=users['data'], meta_title='Users')
+    return render_template('blog/users.html', users=users['data'], meta_title='Users')
 
 
 @app.route('/add_user')
 @login_required()
 def add_user():
     gravatar_url = userClass.get_gravatar_link()
-    return render_template('add_user.html', gravatar_url=gravatar_url, meta_title='Add user')
+    return render_template('blog/add_user.html', gravatar_url=gravatar_url, meta_title='Add user')
 
 
 @app.route('/edit_user?id=<id>')
 @login_required()
 def edit_user(id):
     user = userClass.get_user(id)
-    return render_template('edit_user.html', user=user['data'], meta_title='Edit user')
+    return render_template('blog/edit_user.html', user=user['data'], meta_title='Edit user')
 
 
 @app.route('/delete_user?id=<id>')
@@ -333,7 +334,7 @@ def blog_settings():
                 flash('Settings updated!', 'success')
                 return redirect(url_for('blog_settings'))
 
-    return render_template('settings.html',
+    return render_template('blog/settings.html',
                            default_settings=app.config,
                            meta_title='Settings',
                            error=error,
@@ -398,7 +399,7 @@ def install():
         if settingsClass.is_installed():
             return redirect(url_for('index'))
 
-    return render_template('install.html',
+    return render_template('blog/install.html',
                            default_settings=app.config,
                            error=error,
                            error_type=error_type,
@@ -425,7 +426,7 @@ def is_installed():
 
 @app.errorhandler(404)
 def page_not_found(error):
-    return render_template('404.html', meta_title='404'), 404
+    return render_template('blog/404.html', meta_title='404'), 404
 
 
 @app.template_filter('formatdate')

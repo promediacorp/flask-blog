@@ -1,8 +1,9 @@
 import pymongo
 import os
+from helpers import smartMongo
 
 CONNECTION_STRING = "mongodb://localhost"  # replace it with your settings
-CONNECTION = pymongo.MongoClient(CONNECTION_STRING)
+CONNECTION = smartMongo('uphail.com')
 
 '''Leave this as is if you dont have other configuration'''
 DATABASE = CONNECTION.blog
