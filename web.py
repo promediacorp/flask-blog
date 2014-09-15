@@ -17,7 +17,7 @@ mypath = os.path.dirname(os.path.realpath(__file__))
 template_dir = os.path.join(mypath, "..", "templates")
 
 app = Flask('FlaskBlog', template_folder=template_dir)
-md = Markdown(app)
+md = Markdown(app, safe_mode=False, output_format='html5')
 md.register_extension(GitHubGistExtension)
 md.register_extension(StrikeExtension)
 md.register_extension(QuoteExtension)
