@@ -14,7 +14,7 @@ import config
 from helper_functions import *
 
 mypath = os.path.dirname(os.path.realpath(__file__))
-#template_dir = os.path.join(mypath, "..", "templates")
+template_dir = os.path.join(mypath, "..", "templates")
 
 app = Flask('FlaskBlog', template_folder='templates')
 md = Markdown(app, safe_mode=False, output_format='html5')
@@ -43,7 +43,7 @@ def index(page):
     }
   ]
 
-  return render_template('blog/index.html', posts=posts['data'], pagination=pag,
+  return render_template('index.html', posts=posts['data'], pagination=pag,
                         meta_title=app.config['BLOG_TITLE'],
                         breadcrumbs=breadcrumbs)
 
@@ -57,7 +57,7 @@ def posts_by_tag(tag, page):
   if not posts['data']:
     abort(404)
   pag = pagination.Pagination(page, app.config['PER_PAGE'], count)
-  return render_template('blog/index.html', posts=posts['data'], pagination=pag, meta_title='Posts by tag: ' + tag)
+  return render_template('index.html', posts=posts['data'], pagination=pag, meta_title='Posts by tag: ' + tag)
 
 
 @app.route('/post/<permalink>')
@@ -91,7 +91,7 @@ def search_results(page, query):
     posts['data'] = []
   count = postClass.get_total_count(search=query)
   pag = pagination.Pagination(page, app.config['PER_PAGE'], count)
-  return render_template('blog/index.html', posts=posts['data'], pagination=pag, meta_title='Search results')
+  return render_template('index.html', posts=posts['data'], pagination=pag, meta_title='Search results')
 
 
 @app.route('/search', methods=['GET', 'POST'])
@@ -159,7 +159,7 @@ def new_post():
   else:
     if session.get('post-preview') and session['post-preview']['action'] == 'edit':
       session.pop('post-preview', None)
-  return render_template('blog/new_post.html',
+  return render_template('new_post.html',
                meta_title='New post',
                error=error,
                error_type=error_type)
@@ -169,7 +169,7 @@ def new_post():
 @login_required()
 def post_preview():
   post = session.get('post-preview')
-  return render_template('blog/preview.html', post=post, meta_title='Preview post::' + post['title'])
+  return render_template('preview.html', post=post, meta_title='Preview post::' + post['title'])
 
 
 @app.route('/posts_list', defaults={'page': 1})
@@ -185,7 +185,7 @@ def posts(page):
   if not posts['data']:
     abort(404)
 
-  return render_template('blog/posts.html', posts=posts['data'], pagination=pag, meta_title='Posts')
+  return render_template('posts.html', posts=posts['data'], pagination=pag, meta_title='Posts')
 
 
 @app.route('/post_edit?id=<id>')
@@ -198,7 +198,7 @@ def post_edit(id):
 
   if session.get('post-preview') and session['post-preview']['action'] == 'add':
     session.pop('post-preview', None)
-  return render_template('blog/edit_post.html',
+  return render_template('edit_post.html',
                meta_title='Edit post::' + post['data']['title'],
                post=post['data'],
                error=False,
@@ -243,7 +243,7 @@ def login():
     if session.get('user'):
       return redirect(url_for('posts'))
 
-  return render_template('blog/login.html',
+  return render_template('login.html',
                meta_title='Login',
                error=error,
                error_type=error_type)
@@ -260,21 +260,21 @@ def logout():
 @login_required()
 def users_list():
   users = userClass.get_users()
-  return render_template('blog/users.html', users=users['data'], meta_title='Users')
+  return render_template('users.html', users=users['data'], meta_title='Users')
 
 
 @app.route('/add_user')
 @login_required()
 def add_user():
   gravatar_url = userClass.get_gravatar_link()
-  return render_template('blog/add_user.html', gravatar_url=gravatar_url, meta_title='Add user')
+  return render_template('add_user.html', gravatar_url=gravatar_url, meta_title='Add user')
 
 
 @app.route('/edit_user?id=<id>')
 @login_required()
 def edit_user(id):
   user = userClass.get_user(id)
-  return render_template('blog/edit_user.html', user=user['data'], meta_title='Edit user')
+  return render_template('edit_user.html', user=user['data'], meta_title='Edit user')
 
 
 @app.route('/delete_user?id=<id>')
@@ -361,7 +361,7 @@ def blog_settings():
         flash('Settings updated!', 'success')
         return redirect(url_for('blog_settings'))
 
-  return render_template('blog/settings.html',
+  return render_template('settings.html',
                default_settings=app.config,
                meta_title='Settings',
                error=error,
@@ -426,7 +426,7 @@ def install():
     if settingsClass.is_installed():
       return redirect(url_for('index'))
 
-  return render_template('blog/install.html',
+  return render_template('install.html',
                default_settings=app.config,
                error=error,
                error_type=error_type,
