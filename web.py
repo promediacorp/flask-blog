@@ -16,7 +16,7 @@ from helper_functions import *
 mypath = os.path.dirname(os.path.realpath(__file__))
 template_dir = os.path.join(mypath, "..", "templates")
 
-app = Flask('FlaskBlog', template_folder=template_dir)
+app = Flask('FlaskBlog', template_folder="templates")
 md = Markdown(app, safe_mode=False, output_format='html5')
 md.register_extension(GitHubGistExtension)
 md.register_extension(StrikeExtension)
@@ -75,7 +75,7 @@ def single_post(permalink):
   ]
   if not post['data']:
     abort(404)
-  return render_template('blog/single_post.html', post=post['data'], meta_title=app.config['BLOG_TITLE'] + '::' + post['data']['title'],
+  return render_template('single_post.html', post=post['data'], meta_title=app.config['BLOG_TITLE'] + '::' + post['data']['title'],
                         breadcrumbs=breadcrumbs)
 
 
