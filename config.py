@@ -1,12 +1,24 @@
-import pymongo
+from pymongo import MongoClient
 import os
-from helpers import smartMongo
 
-CONNECTION_STRING = "mongodb://localhost"  # replace it with your settings
-CONNECTION = smartMongo('uphail.com')
+working_path_list = ['/Users/kennethrhee/projects/flask-blog', '/Users/aviwilensky/Desktop/git/flask-blog']
+
+try:
+  s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+  s.connect(("gmail.com",80))
+  machine_ip = s.getsockname()[0]
+  s.close()
+except:
+  machine_ip = ''
+
+if os.path.dirname(os.path.realpath(__file__)) in working_path_list or machine_ip == '162.243.225.65':
+  mc = MongoClient('162.243.225.65')
+  print 'Debug ON & Connected: local/staging'
+else:
+  mc = MongoClient()
 
 '''Leave this as is if you dont have other configuration'''
-DATABASE = CONNECTION.blog
+DATABASE = mc.blog
 POSTS_COLLECTION = DATABASE.posts
 USERS_COLLECTION = DATABASE.users
 SETTINGS_COLLECTION = DATABASE.settings
