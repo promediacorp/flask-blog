@@ -198,7 +198,7 @@ def post_edit(id):
 
   if session.get('post-preview') and session['post-preview']['action'] == 'add':
     session.pop('post-preview', None)
-  return render_template('edit_post.html',
+  return render_template('blog/edit_post.html',
                meta_title='Edit post::' + post['data']['title'],
                post=post['data'],
                error=False,
