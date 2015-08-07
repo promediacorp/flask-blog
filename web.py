@@ -12,6 +12,7 @@ import pagination
 import settings
 import config
 from helper_functions import *
+import HTMLParser
 
 mypath = os.path.dirname(os.path.realpath(__file__))
 template_dir = os.path.join(mypath, "..", "templates")
@@ -75,6 +76,9 @@ def single_post(permalink):
   ]
   if not post['data']:
     abort(404)
+  h = HTMLParser.HTMLParser()
+  post['data']['preview'] = h.unescape(post['data']['preview'])
+  post['data']['body'] = h.unescape(post['data']['body'])
   return render_template('blog/single_post.html', post=post['data'], meta_title=app.config['BLOG_TITLE'] + '::' + post['data']['title'],
                         breadcrumbs=breadcrumbs)
 
