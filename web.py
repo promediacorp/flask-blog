@@ -43,6 +43,10 @@ def index(page):
       'text': 'Blog'
     }
   ]
+  for post in posts:
+    h = HTMLParser.HTMLParser()
+    post['data']['preview'] = h.unescape(post['data']['preview'])
+    post['data']['body'] = h.unescape(post['data']['body'])
 
   return render_template('blog/index.html', posts=posts['data'], pagination=pag,
                         meta_title=app.config['BLOG_TITLE'],
